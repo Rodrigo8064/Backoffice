@@ -8,7 +8,7 @@ class ProductListView(LoginRequiredMixin, ListView):
     model = models.ProductType
     template_name = 'product_list.html'
     context_object_name = 'products_type'
-    paginate_by = 30
+    paginate_by = 15
 
     def get_queryset(self):
         queryset = super().get_queryset()

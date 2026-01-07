@@ -1,3 +1,7 @@
 from django.db import models
 
-# Create your models here.
+
+class History(models.Model):
+    entidade = models.CharField()
+    ficha = models.CharField()
+    nova_tax = models.CharField()

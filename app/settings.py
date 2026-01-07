@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-$3sy3md4(#9^(!+(ehct4-#8mgmyyvcyti3ko_0&+*tq2n1w!d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mptt',
     'product_type',
+    'category',
+    'history',
 ]
 
 LOGIN_URL = 'login'
