@@ -27,9 +27,9 @@
             <div class="row g-3 align-items-end">
                 
                 <div class="col-md-5">
-                    <label for="nome" class="form-label">Buscar por nome</label>
+                    <label for="name" class="form-label">Buscar por nome</label>
                     <input type="text" class="form-control" id="nome" 
-                           name="nome" value="{{ nome }}">
+                           name="name" value="{{ name }}">
                 </div>
                 
                 <div class="col-md-5">
@@ -76,7 +76,7 @@
                 {% for ptype in products_type %}
                 <tr>
                     <td>
-                        <a>{{ ptype.nome }}</a>
+                        <a>{{ ptype.name }}</a>
                     </td>
                     <td href="?parent={{ ptype.id }}">
                         {{ ptype }}
@@ -94,7 +94,7 @@
                 <tr>
                     <td colspan="3" class="text-center py-5">
                         <p class="mb-0">
-                            {% if nome or parent_filter %}
+                            {% if name or parent_filter %}
                                 Nenhum resultado encontrado para esta busca.
                             {% else %}
                                 Não há itens para exibir.
@@ -113,7 +113,7 @@
             
             {% if page_obj.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if nome %}&nome={{ nome|urlencode }}{% endif %}{% if parent_filter %}&parent={{ parent_filter }}{% endif %}">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if name %}&name={{ name|urlencode }}{% endif %}{% if parent_filter %}&parent={{ parent_filter }}{% endif %}">
                         Anterior
                     </a>
                 </li>
@@ -127,7 +127,7 @@
             
             {% if page_obj.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if nome %}&nome={{ nome|urlencode }}{% endif %}{% if parent_filter %}&parent={{ parent_filter }}{% endif %}">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if name %}&nome={{ name|urlencode }}{% endif %}{% if parent_filter %}&parent={{ parent_filter }}{% endif %}">
                         Próxima
                     </a>
                 </li>

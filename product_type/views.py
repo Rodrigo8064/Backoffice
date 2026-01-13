@@ -12,7 +12,7 @@ class ProductListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        nome = self.request.GET.get('nome')
+        name = self.request.GET.get('name')
         parent = self.request.GET.get('parent')
         if parent:
             try:
@@ -21,8 +21,8 @@ class ProductListView(LoginRequiredMixin, ListView):
                 
             except models.ProductType.DoesNotExist:
                 queryset = queryset.none()
-        if nome:
-            queryset = queryset.filter(nome__icontains=nome)
+        if name:
+            queryset = queryset.filter(nome__icontains=name)
 
         return queryset
 
@@ -30,7 +30,7 @@ class ProductListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['parent_options'] = models.ProductType.objects.filter(parent__isnull=True)
         context['total_count'] = models.ProductType.objects.count()
-        context['nome'] = self.request.GET.get('nome', '')
+        context['name'] = self.request.GET.get('name', '')
         context['parent_filter'] = self.request.GET.get('parent', '')
         return context
 

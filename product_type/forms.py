@@ -13,8 +13,8 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = models.ProductType
-        fields = ['nome', 'parent']
+        fields = ['name', 'parent']
         labels = {
-            'nome': 'Nome',
+            'name': 'Nome',
             'parent': 'Categoria'
         }
