@@ -15,7 +15,7 @@ Abaixo está o status de desenvolvimento das principais funcionalidades:
 
 [x] Visualização de Tipos de Produto (Disponível ✅)
 
-Listagem completa dos tipos cadastrados.
+[x] Listagem completa dos tipos cadastrados.
 
 [ ] Visualização de Categorias (Em breve)
 
