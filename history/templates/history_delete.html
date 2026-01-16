@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Deletar: {{ object.name }}{% endblock %}
+
+{% block content %}
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'history_list' %}">Histórico</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'history_update' object.pk %}">Editar: {{ object.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Deletar</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm border-danger">
+        <div class="card-body p-4">
+            <h4 class="card-title text-danger">Confirmar Deleção</h4>
+            <p>Você tem certeza que deseja deletar permanentemente a relação?:</p>
+            
+            <h5 class="text-center my-3 bg-light p-3 rounded">
+                "{{ object }}"
+            </h5>
+            <p><strong>Esta ação não pode ser desfeita.</strong></p>
+
+            <form method="POST">
+                {% csrf_token %}
+                
+                <button type="submit" class="btn btn-danger">Sim, tenho certeza. Deletar.</button>
+                <a href="{% url 'history_update' object.pk %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}

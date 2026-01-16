@@ -22,7 +22,7 @@ class ProductListView(LoginRequiredMixin, ListView):
             except models.ProductType.DoesNotExist:
                 queryset = queryset.none()
         if name:
-            queryset = queryset.filter(nome__icontains=name)
+            queryset = queryset.filter(name__icontains=name)
 
         return queryset
 

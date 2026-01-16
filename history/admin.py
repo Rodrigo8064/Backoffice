@@ -1,3 +1,10 @@
 from django.contrib import admin
+from . import models
 
-# Register your models here.
+
+class HistoryAdmin(admin.ModelAdmin):
+    list_display = ('entity', 'record', 'new_tax',)
+    search_fields = ('entity',)
+
+
+admin.site.register(models.History, HistoryAdmin)

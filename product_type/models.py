@@ -15,9 +15,9 @@ class ProductType(MPTTModel):
     update_at = models.DateTimeField(auto_now=True)
 
     class MPTTMeta:
-        order_insertion_by = ['nome']
+        order_insertion_by = ['name']
 
     def __str__(self):
         ancestors = self.get_ancestors(include_self=True)
 
-        return ' > '.join([anc.nome for anc in ancestors])
+        return ' > '.join([anc.name for anc in ancestors])

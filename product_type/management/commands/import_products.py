@@ -29,7 +29,7 @@ class Command(BaseCommand):
 
                 if nome_pai:
                     try:
-                        parent_object = ProductType.objects.get(nome=nome_pai)
+                        parent_object = ProductType.objects.get(name=nome_pai)
                     except ProductType.DoesNotExist:
                         self.stdout.write(self.style.ERROR(
                             f"Pai '{nome_pai}' para o produto '{nome_produto}' não encontrado. "
@@ -40,7 +40,7 @@ class Command(BaseCommand):
                         continue
 
                 product, created = ProductType.objects.get_or_create(
-                    nome=nome_produto,
+                    name=nome_produto,
                     defaults={'parent': parent_object}
                 )
 
