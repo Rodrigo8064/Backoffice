@@ -6,8 +6,9 @@ ENV POETRY_VIRTUALENVS_CREATE=false
 
 WORKDIR /backoffice
 
-RUN pip install --upgrade pip
-RUN pip install poetry
+RUN apt-get update && apt-get install -y libpq-dev gcc && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --upgrade pip poetry gunicorn
 
 COPY pyproject.toml poetry.lock ./
 
@@ -20,4 +21,4 @@ RUN poetry install \
 COPY . .
 
 EXPOSE 8000
-CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+CMD ["gunicorn", "app.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4", "--access-logfile", "-"]

@@ -4,6 +4,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 class Category(MPTTModel):
     name = models.CharField(max_length=200, unique=True)
+    url = models.CharField(max_length=4, unique=True, null=True, blank=True)
     parent = TreeForeignKey(
         'self',
         on_delete=models.CASCADE,

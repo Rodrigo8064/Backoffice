@@ -79,13 +79,14 @@
             </div>
             
             <hr class="my-2 text-secondary">
-            {% url 'category' as category_url %}
+            {% url 'category_list' as category_url %}
             {% url 'history_list' as history_url %}
             {% url 'product_list' as product_url %}
+            {% url 'classification' as classification_url %}
             <!-- Menu de categorias -->
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == category_url %}active{% endif %}" href="{% url 'category' %}">
+                    <a class="nav-link {% if request.path == category_url %}active{% endif %}" href="{% url 'category_list' %}">
                         <i class="bi bi-grid me-2"></i>
                         Categoria
                     </a>
@@ -100,6 +101,12 @@
                     <a class="nav-link {% if request.path == product_url %}active{% endif %}" href="{% url 'product_list' %}">
                         <i class="bi bi-tags me-2"></i>
                         Tipo de produto
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == classification_url %}active{% endif %}" href="{% url 'classification' %}">
+                        <i class="bi bi-search me-2"></i>
+                        Verificar Classificação
                     </a>
                 </li>
             </ul>

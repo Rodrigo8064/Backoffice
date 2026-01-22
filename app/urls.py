@@ -4,6 +4,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("select2/", include("django_select2.urls")),
 
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
@@ -11,4 +12,5 @@ urlpatterns = [
     path('', include('category.urls')),
     path('', include('history.urls')),
     path('', include('product_type.urls')),
+    path('', include('client.urls'))
 ]

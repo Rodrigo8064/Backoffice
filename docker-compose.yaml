@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   backoffice_db:
     image: postgres:17
@@ -8,26 +10,38 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data:Z
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d backoffice"]
       interval: 5s
       timeout: 5s
       retries: 5
 
+  redis_cache:
+    image: redis:alpine
+    restart: always
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data:Z
+
   backoffice:
     build: .
     image: backoffice_image
     ports:
       - "8000:8000"
+    # A identação aqui é crítica. Mantenha exatamente assim:
     depends_on:
       backoffice_db:
         condition: service_healthy
+      redis_cache:
+        condition: service_started
     volumes:
-      - .:/backoffice
+      - .:/backoffice:Z
     restart: always
     env_file:
       - .env
 
 volumes:
   postgres_data:
+  redis_data:

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Deletar: {{ object.name }}{% endblock %}
+
+{% block content %}
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'category_list' %}">Categorias</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'category_update' object.pk %}">Editar: {{ object.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Deletar</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm border-danger">
+        <div class="card-body p-4">
+            <h4 class="card-title text-danger">Confirmar Deleção</h4>
+            <p>Você tem certeza que deseja deletar permanentemente a categoria: </p>
+            
+            <h5 class="text-center my-3 bg-light p-3 rounded">
+                "{{ object }}"
+            </h5>
+
+            {% with descendants=object.get_descendants %}
+                {% if descendants %}
+                <div class="alert alert-danger" role="alert">
+                    <h5 class="alert-heading">ATENÇÃO!</h5>
+                    <p>Deletar este item também irá deletar permanentemente 
+                       <strong>{{ descendants.count }}</strong> sub-itens associados:</p>
+                    <hr>
+                    <ul>
+                        {% for item in descendants %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            {% endwith %}
+
+            <p><strong>Esta ação não pode ser desfeita.</strong></p>
+
+            <form method="POST">
+                {% csrf_token %}
+                
+                <button type="submit" class="btn btn-danger">Sim, tenho certeza. Deletar.</button>
+                <a href="{% url 'category_update' object.pk %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}

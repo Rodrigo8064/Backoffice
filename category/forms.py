@@ -4,16 +4,16 @@ from django_select2 import forms as s2forms
 
 
 class ParentSearchWidget(s2forms.ModelSelect2Widget):
-    # model = models.ProductType
     search_fields = [
-        "name__icontains", # Busca pelo nome (case insensitive)
+        "name__icontains",
     ]
 
 
-class ProductForm(forms.ModelForm):
+class CategoryForm(forms.ModelForm):
+
     class Meta:
-        model = models.ProductType
-        fields = ['name', 'parent']
+        model = models.Category
+        fields = ['name', 'url', 'parent']
         widgets = {
             'parent': ParentSearchWidget(
                 attrs={'data-minimum-input-length': 0} # Começa a buscar ao clicar
@@ -21,5 +21,6 @@ class ProductForm(forms.ModelForm):
         }
         labels = {
             'name': 'Nome',
-            'parent': 'Categoria'
+            'url': 'ID',
+            'parent': 'Categoria',
         }
