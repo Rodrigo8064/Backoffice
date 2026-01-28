@@ -22,7 +22,7 @@ class CategoryListView(LoginRequiredMixin, ListView):
             except models.Category.DoesNotExist:
                 queryset = queryset.none()
         if name:
-            queryset = queryset.filter(name__icontains=name)
+            queryset = queryset.filter(name__unaccent__icontains=name)
 
         return queryset
 

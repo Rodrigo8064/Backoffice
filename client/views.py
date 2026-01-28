@@ -1,4 +1,6 @@
 from django.views.generic import ListView
+from django.shortcuts import render
+from .agent import IAgent
 from . import models, clients
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -21,3 +23,14 @@ class SkuListView(LoginRequiredMixin, ListView):
                 context['error'] = f"Erro ao buscar dados: {e}"
 
         return context
+
+
+def ia_agent(request):
+    descricao = request.GET.get('descricao')
+    sugestao = None
+
+    if descricao:
+        agent = IAgent()
+        sugestao = agent.invoke(descricao)
+
+    return render(request, 'IAgent.html', {'sugestao': sugestao})

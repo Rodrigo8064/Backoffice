@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Consulta de Navegation{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Seu auxiliar em categorização</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Filtro</h5>
+            <form method="GET" class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="descricao_input" class="col-form-label">Descrição:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" id="descricao_input" name="descricao" class="form-control" value="{{ request.GET.descricao }}">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if sugestao %}
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <h5 class="card-title">🚀 Sugestão da IA:</h5>
+            <hr>
+            <p><strong>Categoria Sugerida:</strong> {{ sugestao.categoria }}</p>
+            <p><strong>Tipo de Produto:</strong> {{ sugestao.tipo_produto }}</p>
+            
+            {% if sugestao.confianca < 0.5 %}
+                <div class="alert alert-warning">
+                    ⚠️ <strong>Atenção:</strong> A IA tem baixa confiança nesta classificação. Verifique manualmente.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% elif request.GET.descricao %}
+    <div class="alert alert-info mt-4">
+        Processando sua sugestão...
+    </div>
+    {% endif %}
+{% endblock %}

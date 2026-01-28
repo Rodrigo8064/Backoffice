@@ -3,7 +3,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 
 class ProductType(MPTTModel):
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200, unique=True, db_index=True)
     parent = TreeForeignKey(
         'self',
         on_delete=models.CASCADE,

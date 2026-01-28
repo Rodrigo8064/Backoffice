@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'mptt',
     'product_type',
     'category',
@@ -132,7 +133,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
@@ -164,3 +165,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
 SELECT2_CACHE_BACKEND = "select2"
+
+OPENAI_MODEL = os.getenv('OPENAI_MODEL', 'gemini-2.5-pro')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
+BASE_URL = os.getenv('BASE_URL', '')
