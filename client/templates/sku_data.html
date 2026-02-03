@@ -4,16 +4,16 @@
 
 {% block content %}
 
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Consulta de SKU</li>
-        </ol>
-    </nav>
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Consulta de SKU</a>
+        </li>
+    </ul>
 
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <h5 class="card-title">Filtro</h5>
+            <h5 class="card-title">Buscar</h5>
+            <h6 class="card-subtitle">Insira um navigation ID para ver as informações referentes a sua categorização</h6>
             <form method="GET" class="row g-3 align-items-center">
                 <div class="col-auto">
                     <label for="navigation_input" class="col-form-label">Navigation_id:</label>

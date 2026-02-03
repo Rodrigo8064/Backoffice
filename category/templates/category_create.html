@@ -3,26 +3,38 @@
 {% block title %}Criar Nova Categoria/subcategoria{% endblock %}
 
 {% block styles %}
-<style>
-    #id_nome, #id_parent {
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--bs-body-color);
-        background-color: var(--bs-body-bg);
-        background-clip: padding-box;
-        border: var(--bs-border-width) solid var(--bs-border-color);
-        border-radius: var(--bs-border-radius);
-        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-    }
+    {{ form.media.css }}
+    <style>
+        /* FORÇA A LARGURA: O !important aqui é vital para vencer os 22px do JS */
+        .select2-container {
+            width: 100% !important;
+        }
 
-    #id_parent {
-        padding: 0.375rem 2.25rem 0.375rem 0.75rem;
-    }
-</style>
+        /* FIX DA TRANSPARÊNCIA E SOBREPOSIÇÃO */
+        /* .select2-container--open é quando a lista está aberta */
+        .select2-dropdown {
+            background-color: #ffffff !important; 
+            border: 1px solid #dee2e6 !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+            z-index: 9999 !important;
+            opacity: 1 !important; /* Força opacidade total */
+            display: block !important;
+        }
+
+        /* Estilização da caixa fechada (na página) */
+        .select2-container--default .select2-selection--single {
+            height: 38px !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 0.375rem !important;
+            background-color: #fff !important;
+        }
+
+        /* Itens da lista */
+        .select2-results__option {
+            background-color: #fff !important; /* Garante fundo branco em cada item */
+            color: #333 !important;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -73,4 +85,7 @@
             </form>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{ form.media.js }}
 {% endblock %}

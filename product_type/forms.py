@@ -4,9 +4,7 @@ from django_select2 import forms as s2forms
 
 
 class ParentSearchWidget(s2forms.ModelSelect2Widget):
-    search_fields = [
-        "name__icontains",
-    ]
+    search_fields = ["name__unaccent__icontains"]
 
 
 class ProductForm(forms.ModelForm):
@@ -15,10 +13,13 @@ class ProductForm(forms.ModelForm):
         fields = ['name', 'parent']
         widgets = {
             'parent': ParentSearchWidget(
-                attrs={'data-minimum-input-length': 0}
+                attrs={
+                    'data-width': '100%',
+                    'class': 'form-control',
+                }
             ),
         }
         labels = {
             'name': 'Nome',
-            'parent': 'Categoria'
+            'parent': 'Família'
         }
