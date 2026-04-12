@@ -1,0 +1,501 @@
+{% extends "base.html" %}
+
+{% block title %}{{ object.name }} — AtributoHub{% endblock %}
+
+{% block breadcrumb %}Atributos › {{ object.name }}{% endblock %}
+{% block page_title %}{{ object.name }}{% endblock %}
+
+{% block nav_list %}active{% endblock %}
+
+{% block topbar_actions %}
+    <a href="{% url 'attributes:attribute_list' %}" class="btn-action secondary">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+    <a href="{% url 'attributes:attribute_update' object.pk %}" class="btn-action primary">
+        <i class="bi bi-pencil"></i> Editar
+    </a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .btn-action {
+        height: 34px;
+        padding: 0 16px;
+        font-size: 13px;
+        font-weight: 500;
+        border-radius: var(--radius);
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        text-decoration: none;
+        transition: opacity var(--transition), background var(--transition), color var(--transition);
+        border: none;
+        cursor: pointer;
+    }
+    .btn-action.secondary {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+    }
+    .btn-action.secondary:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .btn-action.primary {
+        background: var(--accent);
+        color: #fff;
+        border: 1px solid transparent;
+    }
+    .btn-action.primary:hover { opacity: 0.88; box-shadow: 0 0 0 3px var(--accent-glow); }
+
+    /* ── Layout ── */
+    .detail-layout {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        gap: 20px;
+        align-items: start;
+    }
+
+    @media (max-width: 900px) {
+        .detail-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── Hero card ── */
+    .hero-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    .hero-banner {
+        height: 6px;
+        background: linear-gradient(90deg, var(--accent) 0%, #7c3aed 100%);
+    }
+
+    .hero-body {
+        padding: 28px 28px 24px;
+    }
+
+    .hero-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .hero-name {
+        font-family: var(--font-mono);
+        font-size: 26px;
+        font-weight: 600;
+        color: var(--text-primary);
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+        word-break: break-word;
+    }
+
+    .hero-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+        flex-shrink: 0;
+        margin-top: 4px;
+    }
+    .hero-status.active   { background: rgba(62,207,142,0.12); color: var(--success); border: 1px solid rgba(62,207,142,0.2); }
+    .hero-status.inactive { background: rgba(247,111,111,0.10); color: var(--danger);  border: 1px solid rgba(247,111,111,0.2); }
+
+    /* Expected value block */
+    .expected-block {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius);
+        padding: 14px 18px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .expected-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: var(--accent-glow);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: var(--accent);
+        flex-shrink: 0;
+    }
+
+    .expected-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 3px;
+    }
+
+    .expected-value {
+        font-family: var(--font-mono);
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .expected-value.empty {
+        font-style: italic;
+        font-family: var(--font-sans);
+        font-weight: 400;
+        color: var(--text-muted);
+        font-size: 13px;
+    }
+
+    /* ── Section title ── */
+    .section-title {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border-subtle);
+    }
+
+    /* ── Sources grid ── */
+    .sources-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 28px;
+    }
+
+    .source-row {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius);
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: border-color var(--transition);
+    }
+
+    .source-row.shopify { border-left: 3px solid var(--accent); }
+    .source-row.magalu  { border-left: 3px solid #a78bfa; }
+    .source-row.other   { border-left: 3px solid var(--border-active); }
+
+    .source-logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    .source-logo.shopify { background: rgba(79,142,247,0.12); color: var(--accent); }
+    .source-logo.magalu  { background: rgba(167,139,250,0.12); color: #a78bfa; }
+    .source-logo.other   { background: var(--bg-hover); color: var(--text-muted); }
+
+    .source-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .source-tag {
+        margin-left: auto;
+        font-size: 11px;
+        padding: 2px 10px;
+        border-radius: 20px;
+    }
+    .source-tag.shopify { background: var(--accent-glow); color: var(--accent); }
+    .source-tag.magalu  { background: rgba(167,139,250,0.1); color: #a78bfa; }
+    .source-tag.other   { background: var(--bg-hover); color: var(--text-muted); }
+
+    /* ── Families grid ── */
+    .families-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .family-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius);
+        padding: 8px 14px;
+        font-size: 13px;
+        color: var(--text-primary);
+        transition: border-color var(--transition), background var(--transition);
+    }
+    .family-chip:hover { border-color: var(--border-active); background: var(--bg-hover); }
+    .family-chip i { color: var(--text-muted); font-size: 14px; }
+
+    /* ── Empty inline ── */
+    .empty-inline {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-style: italic;
+        padding: 10px 0;
+    }
+
+    /* ── Side panel ── */
+    .side-panel { display: flex; flex-direction: column; gap: 16px; }
+
+    .info-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    .info-card-header {
+        padding: 13px 18px;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    /* ── Audit rows ── */
+    .audit-list {
+        padding: 6px 0;
+    }
+
+    .audit-row {
+        display: flex;
+        align-items: center;
+        padding: 11px 18px;
+        gap: 12px;
+        border-bottom: 1px solid var(--border-subtle);
+        transition: background var(--transition);
+    }
+    .audit-row:last-child { border-bottom: none; }
+    .audit-row:hover { background: var(--bg-hover); }
+
+    .audit-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 7px;
+        background: var(--bg-elevated);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: var(--text-muted);
+        flex-shrink: 0;
+    }
+
+    .audit-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-bottom: 2px;
+    }
+
+    .audit-value {
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+    }
+
+    /* ── Quick actions ── */
+    .quick-actions {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .quick-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: var(--radius);
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        border: 1px solid var(--border-subtle);
+        background: var(--bg-elevated);
+        color: var(--text-secondary);
+        transition: background var(--transition), color var(--transition), border-color var(--transition);
+    }
+    .quick-btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--border-active); }
+    .quick-btn.edit:hover { color: var(--accent); border-color: var(--accent-dim); background: var(--accent-glow); }
+    .quick-btn i { font-size: 15px; }
+
+    /* ── ID badge ── */
+    .id-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--text-muted);
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: 20px;
+        padding: 2px 10px;
+        margin-top: 6px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="detail-layout">
+
+    <!-- ── Main card ── -->
+    <div class="hero-card">
+        <div class="hero-banner"></div>
+        <div class="hero-body">
+
+            <!-- Header -->
+            <div class="hero-top">
+                <div>
+                    <h2 class="hero-name">{{ object.name }}</h2>
+                    <div class="id-badge"><i class="bi bi-hash"></i> ID {{ object.pk }}</div>
+                </div>
+                <span class="hero-status {% if object.is_active %}active{% else %}inactive{% endif %}">
+                    <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                    {% if object.is_active %}Ativo{% else %}Inativo{% endif %}
+                </span>
+            </div>
+
+            <!-- Valor esperado -->
+            <div class="expected-block">
+                <div class="expected-icon"><i class="bi bi-input-cursor-text"></i></div>
+                <div>
+                    <div class="expected-label">Valor esperado</div>
+                    {% if object.expected_value %}
+                        <div class="expected-value">{{ object.expected_value }}</div>
+                    {% else %}
+                        <div class="expected-value empty">Não definido</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Fontes -->
+            <p class="section-title">Fontes</p>
+            <div class="sources-grid">
+                {% for source in object.sources.all %}
+                    {% with sname=source.name|lower %}
+                    <div class="source-row {% if 'shopify' in sname %}shopify{% elif 'magalu' in sname %}magalu{% else %}other{% endif %}">
+                        <div class="source-logo {% if 'shopify' in sname %}shopify{% elif 'magalu' in sname %}magalu{% else %}other{% endif %}">
+                            {% if 'shopify' in sname %}
+                                <i class="bi bi-bag-check"></i>
+                            {% elif 'magalu' in sname %}
+                                <i class="bi bi-shop"></i>
+                            {% else %}
+                                <i class="bi bi-globe"></i>
+                            {% endif %}
+                        </div>
+                        <span class="source-name">{{ source.name }}</span>
+                        <span class="source-tag {% if 'shopify' in sname %}shopify{% elif 'magalu' in sname %}magalu{% else %}other{% endif %}">
+                            fonte
+                        </span>
+                    </div>
+                    {% endwith %}
+                {% empty %}
+                    <p class="empty-inline"><i class="bi bi-exclamation-circle"></i> Nenhuma fonte vinculada.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Famílias -->
+            <p class="section-title">Famílias</p>
+            <div class="families-grid">
+                {% for family in object.families.all %}
+                    <div class="family-chip">
+                        <i class="bi bi-collection"></i>
+                        {{ family.name }}
+                    </div>
+                {% empty %}
+                    <p class="empty-inline"><i class="bi bi-exclamation-circle"></i> Nenhuma família vinculada.</p>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ── Side panel ── -->
+    <div class="side-panel">
+
+        <!-- Ações rápidas -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <i class="bi bi-lightning" style="color:var(--accent)"></i> Ações
+            </div>
+            <div class="quick-actions">
+                <a href="{% url 'attributes:attribute_update' object.pk %}" class="quick-btn edit">
+                    <i class="bi bi-pencil"></i> Editar atributo
+                </a>
+                <a href="{% url 'attributes:attribute_list' %}" class="quick-btn">
+                    <i class="bi bi-list-ul"></i> Ver todos os atributos
+                </a>
+                <a href="{% url 'attributes:attribute_create' %}" class="quick-btn">
+                    <i class="bi bi-plus-square"></i> Criar novo atributo
+                </a>
+            </div>
+        </div>
+
+        <!-- Auditoria -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <i class="bi bi-clock-history" style="color:var(--accent)"></i> Auditoria
+            </div>
+            <div class="audit-list">
+                <div class="audit-row">
+                    <div class="audit-icon"><i class="bi bi-calendar-plus"></i></div>
+                    <div>
+                        <div class="audit-label">Criado em</div>
+                        <div class="audit-value">{{ object.created_at|date:"d/m/Y" }}</div>
+                        <div class="audit-value" style="font-size:11px;color:var(--text-muted)">{{ object.created_at|date:"H:i" }}</div>
+                    </div>
+                </div>
+                <div class="audit-row">
+                    <div class="audit-icon"><i class="bi bi-calendar-check"></i></div>
+                    <div>
+                        <div class="audit-label">Atualizado em</div>
+                        <div class="audit-value">{{ object.updated_at|date:"d/m/Y" }}</div>
+                        <div class="audit-value" style="font-size:11px;color:var(--text-muted)">{{ object.updated_at|date:"H:i" }}</div>
+                    </div>
+                </div>
+                <div class="audit-row">
+                    <div class="audit-icon"><i class="bi bi-person"></i></div>
+                    <div>
+                        <div class="audit-label">Criado por</div>
+                        <div class="audit-value">{{ object.user.get_short_name|default:object.user.username }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

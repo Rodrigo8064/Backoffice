@@ -1,10 +1,26 @@
 from django.urls import path
+
 from . import views
 
-
 urlpatterns = [
-    path('stories/', views.HistoryListView.as_view(), name='history_list'),
-    path('stories/create/', views.HistoryCreateView.as_view(), name='history_create'),
-    path('stories/<int:pk>/update/', views.HistoryUpdateView.as_view(), name='history_update'),
-    path('stories/<int:pk>/delete/', views.HistoryDeleteView.as_view(), name='history_delete'),
+    path(
+        route='stories/',
+        view=views.HistoryListView.as_view(),
+        name='history_list'
+    ),
+    path(
+        route='stories/create/',
+        view=views.HistoryCreateView.as_view(),
+        name='history_create',
+    ),
+    path(
+        route='stories/<int:pk>/update/',
+        view=views.HistoryUpdateView.as_view(),
+        name='history_update',
+    ),
+    path(
+        route='stories/<int:pk>/delete/',
+        view=views.HistoryDeleteView.as_view(),
+        name='history_delete',
+    ),
 ]

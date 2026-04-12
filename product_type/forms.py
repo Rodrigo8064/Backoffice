@@ -1,10 +1,11 @@
 from django import forms
-from . import models
 from django_select2 import forms as s2forms
+
+from . import models
 
 
 class ParentSearchWidget(s2forms.ModelSelect2Widget):
-    search_fields = ["name__unaccent__icontains"]
+    search_fields = ['name__unaccent__icontains']
 
 
 class ProductForm(forms.ModelForm):
@@ -19,7 +20,4 @@ class ProductForm(forms.ModelForm):
                 }
             ),
         }
-        labels = {
-            'name': 'Nome',
-            'parent': 'Família'
-        }
+        labels = {'name': 'Nome', 'parent': 'Família'}

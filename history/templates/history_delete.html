@@ -1,33 +1,56 @@
 {% extends "base.html" %}
 
-{% block title %}Deletar: {{ object.name }}{% endblock %}
+{% block title %}Deletar Relação — Histórico OL{% endblock %}
+
+{% block breadcrumb %}Backoffice › Histórico OL › Deletar{% endblock %}
+{% block page_title %}Deletar relação{% endblock %}
+
+{% block nav_history %}active-purple{% endblock %}
+
+{% block topbar_actions %}
+    <a href="{% url 'history_update' object.pk %}" class="btn-topbar">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+{% endblock %}
 
 {% block content %}
-    
+
+<div style="max-width: 520px;">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'history_list' %}">Histórico</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'history_update' object.pk %}">Editar: {{ object.name }}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Deletar</li>
+            <li class="breadcrumb-item"><a href="{% url 'history_list' %}">Histórico OL</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'history_update' object.pk %}">Editar</a></li>
+            <li class="breadcrumb-item active">Deletar</li>
         </ol>
     </nav>
 
-    <div class="card shadow-sm border-danger">
-        <div class="card-body p-4">
-            <h4 class="card-title text-danger">Confirmar Deleção</h4>
-            <p>Você tem certeza que deseja deletar permanentemente a relação?:</p>
-            
-            <h5 class="text-center my-3 bg-light p-3 rounded">
-                "{{ object }}"
-            </h5>
-            <p><strong>Esta ação não pode ser desfeita.</strong></p>
+    <div class="card border-danger">
+        <div class="card-header d-flex align-items-center gap-2" style="color:var(--danger);">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            Confirmar deleção
+        </div>
+        <div class="card-body">
+            <p style="color:var(--text-secondary); font-size:13.5px;">
+                Você tem certeza que deseja deletar permanentemente a relação:
+            </p>
+
+            <div class="confirm-name-block">"{{ object }}"</div>
+
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">
+                <i class="bi bi-exclamation-circle"></i> Esta ação não pode ser desfeita.
+            </p>
 
             <form method="POST">
                 {% csrf_token %}
-                
-                <button type="submit" class="btn btn-danger">Sim, tenho certeza. Deletar.</button>
-                <a href="{% url 'history_update' object.pk %}" class="btn btn-secondary">Cancelar</a>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Sim, deletar
+                    </button>
+                    <a href="{% url 'history_update' object.pk %}" class="btn btn-secondary">Cancelar</a>
+                </div>
             </form>
         </div>
     </div>
+</div>
+
 {% endblock %}
