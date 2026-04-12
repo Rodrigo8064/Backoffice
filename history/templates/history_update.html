@@ -19,7 +19,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'history_list' %}">Histórico OL</a></li>
-            <li class="breadcrumb-item active">Editar: {{ object.name }}</li>
+            <li class="breadcrumb-item active">Editar: {{ object.entity }}</li>
         </ol>
     </nav>
 
@@ -35,9 +35,26 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    {{ form.as_p }}
-                    {% if form.name.errors %}
-                        <div class="invalid-feedback d-block">{{ form.name.errors.as_text }}</div>
+                    <label for="{{ form.entity.id_for_label }}" class="form-label">{{ form.entity.label }}</label>
+                    {{ form.entity }}
+                    {% if form.entity.errors %}
+                        <div class="invalid-feedback d-block">{{ form.entity.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.record.id_for_label }}" class="form-label">{{ form.record.label }}</label>
+                    {{ form.record }}
+                    {% if form.record.errors %}
+                        <div class="invalid-feedback d-block">{{ form.record.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.new_tax.id_for_label }}" class="form-label">{{ form.new_tax.label }}</label>
+                    {{ form.new_tax }}
+                    {% if form.new_tax.errors %}
+                        <div class="invalid-feedback d-block">{{ form.new_tax.errors.as_text }}</div>
                     {% endif %}
                 </div>
 

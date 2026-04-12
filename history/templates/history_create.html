@@ -40,6 +40,22 @@
                     {% endif %}
                 </div>
 
+                <div class="mb-3">
+                    <label for="{{ form.record.id_for_label }}" class="form-label">{{ form.record.label }}</label>
+                    {{ form.record }}
+                    {% if form.record.errors %}
+                        <div class="invalid-feedback d-block">{{ form.record.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.new_tax.id_for_label }}" class="form-label">{{ form.new_tax.label }}</label>
+                    {{ form.new_tax }}
+                    {% if form.new_tax.errors %}
+                        <div class="invalid-feedback d-block">{{ form.new_tax.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+
                 <hr>
 
                 <div class="d-flex gap-2">

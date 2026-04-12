@@ -150,31 +150,12 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-if DEBUG:
-    CACHES = {
-        "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
-        "select2": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
-    }
-else:
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            # redis_cache é o nome do serviço no docker-compose
-            "LOCATION": "redis://redis_cache:6379/1",
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                # Otimização: ignora erros de conexão para não derrubar o site se o Redis cair
-                "IGNORE_EXCEPTIONS": True,
-            }
-        },
-        "select2": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": "redis://redis_cache:6379/2", # Usamos o DB 2 para separar do default
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            }
-        }
-    }
+
+CACHES = {
+    "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
+    "select2": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
+}
+
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"

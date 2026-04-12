@@ -8,10 +8,10 @@
 {% block nav_list %}active{% endblock %}
 
 {% block topbar_actions %}
-    <a href="{% url 'attributes:attribute_list' %}" class="btn-action secondary">
+    <a href="{% url 'attribute_list' %}" class="btn-action secondary">
         <i class="bi bi-arrow-left"></i> Voltar
     </a>
-    <a href="{% url 'attributes:attribute_update' object.pk %}" class="btn-action primary">
+    <a href="{% url 'attribute_update' object.pk %}" class="btn-action primary">
         <i class="bi bi-pencil"></i> Editar
     </a>
 {% endblock %}
@@ -451,13 +451,13 @@
                 <i class="bi bi-lightning" style="color:var(--accent)"></i> Ações
             </div>
             <div class="quick-actions">
-                <a href="{% url 'attributes:attribute_update' object.pk %}" class="quick-btn edit">
+                <a href="{% url 'attribute_update' object.pk %}" class="quick-btn edit">
                     <i class="bi bi-pencil"></i> Editar atributo
                 </a>
-                <a href="{% url 'attributes:attribute_list' %}" class="quick-btn">
+                <a href="{% url 'attribute_list' %}" class="quick-btn">
                     <i class="bi bi-list-ul"></i> Ver todos os atributos
                 </a>
-                <a href="{% url 'attributes:attribute_create' %}" class="quick-btn">
+                <a href="{% url 'attribute_create' %}" class="quick-btn">
                     <i class="bi bi-plus-square"></i> Criar novo atributo
                 </a>
             </div>

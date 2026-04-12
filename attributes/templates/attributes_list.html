@@ -5,10 +5,10 @@
 {% block breadcrumb %}Atributos{% endblock %}
 {% block page_title %}Atributos{% endblock %}
 
-{% block nav_list %}active{% endblock %}
+{% block nav_attr_list %}active-blue{% endblock %}
 
 {% block topbar_actions %}
-    <a href="{% url 'attributes:attribute_create' %}" class="btn-primary">
+    <a href="{% url 'attribute_create' %}" class="btn-primary">
         <i class="bi bi-plus-lg"></i> Novo atributo
     </a>
 {% endblock %}
@@ -364,7 +364,7 @@
     </button>
 
     {% if request.GET.family or request.GET.source or request.GET.search %}
-    <a href="{% url 'attributes:attribute_list' %}" class="btn-filter active-filter">
+    <a href="{% url 'attribute_list' %}" class="btn-filter active-filter">
         <i class="bi bi-x-lg"></i> Limpar
     </a>
     {% endif %}
@@ -391,7 +391,7 @@
         </thead>
         <tbody>
             {% for attr in attributes %}
-            <tr onclick="window.location='{% url 'attributes:attribute_detail' attr.pk %}'">
+            <tr onclick="window.location='{% url 'attribute_detail' attr.pk %}'">
                 <td>
                     <span class="attr-name">{{ attr.name }}</span>
                 </td>
@@ -427,10 +427,10 @@
                 </td>
                 <td>
                     <div class="row-actions" onclick="event.stopPropagation()">
-                        <a href="{% url 'attributes:attribute_detail' attr.pk %}" class="btn-row" title="Ver detalhes">
+                        <a href="{% url 'attribute_detail' attr.pk %}" class="btn-row" title="Ver detalhes">
                             <i class="bi bi-eye"></i>
                         </a>
-                        <a href="{% url 'attributes:attribute_update' attr.pk %}" class="btn-row edit" title="Editar">
+                        <a href="{% url 'attribute_update' attr.pk %}" class="btn-row edit" title="Editar">
                             <i class="bi bi-pencil"></i>
                         </a>
                     </div>
@@ -456,7 +456,7 @@
             {% endif %}
         </p>
         {% if not request.GET.family and not request.GET.source and not request.GET.search %}
-        <a href="{% url 'attributes:attribute_create' %}" class="btn-primary">
+        <a href="{% url 'attribute_create' %}" class="btn-primary">
             <i class="bi bi-plus-lg"></i> Novo atributo
         </a>
         {% endif %}

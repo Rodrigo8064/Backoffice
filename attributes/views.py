@@ -37,7 +37,7 @@ class AttributeCreateView(LoginRequiredMixin, CreateView):
     model = Attribute
     template_name = 'attributes_create.html'
     form_class = AttributeForm
-    success_url = reverse_lazy('attributes:attribute_list')
+    success_url = reverse_lazy('attribute_list')
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -48,7 +48,7 @@ class AttributeUpdateView(LoginRequiredMixin, UpdateView):
     model = Attribute
     template_name = 'attributes_update.html'
     form_class = AttributeUpdateForm
-    success_url = reverse_lazy('attributes:attribute_list')
+    success_url = reverse_lazy('attribute_list')
 
 
 class AttributeDetailView(LoginRequiredMixin, DetailView):

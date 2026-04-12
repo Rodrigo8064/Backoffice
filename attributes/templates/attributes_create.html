@@ -5,10 +5,10 @@
 {% block breadcrumb %}Atributos › Novo{% endblock %}
 {% block page_title %}Novo atributo{% endblock %}
 
-{% block nav_create %}active{% endblock %}
+{% block nav_attr_create %}active-blue{% endblock %}
 
 {% block topbar_actions %}
-    <a href="{% url 'attributes:attribute_list' %}" class="btn-filter">
+    <a href="{% url 'attribute_list' %}" class="btn-filter">
         <i class="bi bi-arrow-left"></i> Voltar
     </a>
 {% endblock %}
@@ -528,7 +528,7 @@
 
             <!-- Footer -->
             <div class="form-footer">
-                <a href="{% url 'attributes:attribute_list' %}" class="btn-cancel">
+                <a href="{% url 'attribute_list' %}" class="btn-cancel">
                     Cancelar
                 </a>
                 <button type="submit" class="btn-primary">

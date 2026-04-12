@@ -5,10 +5,10 @@
 {% block breadcrumb %}Atributos › Editar{% endblock %}
 {% block page_title %}Editar atributo{% endblock %}
 
-{% block nav_list %}active{% endblock %}
+{% block nav_attr_list %}active-blue{% endblock %}
 
 {% block topbar_actions %}
-    <a href="{% url 'attributes:attribute_detail' object.pk %}" class="btn-back">
+    <a href="{% url 'attribute_detail' object.pk %}" class="btn-back">
         <i class="bi bi-arrow-left"></i> Voltar
     </a>
 {% endblock %}
@@ -610,7 +610,7 @@
 
             <!-- Footer -->
             <div class="form-footer">
-                <a href="{% url 'attributes:attribute_detail' object.pk %}" class="btn-cancel">
+                <a href="{% url 'attribute_detail' object.pk %}" class="btn-cancel">
                     Cancelar
                 </a>
                 <div class="form-footer-right">
