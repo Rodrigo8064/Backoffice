@@ -20,5 +20,6 @@ RUN poetry install \
 
 COPY . .
 
+RUN chmod +x entrypoint.sh
 EXPOSE 8000
-CMD ["gunicorn", "app.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--threads", "2", "--access-logfile", "-", "--timeout", "120"]
+CMD ["./entrypoint.sh"]

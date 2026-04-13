@@ -47,7 +47,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = models.ProductType
     template_name = 'product_update.html'
-    form_class = forms.ProductForm
+    form_class = forms.ProductUpdateForm
     success_url = reverse_lazy('product_list')
 
 

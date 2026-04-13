@@ -6,7 +6,12 @@ class Category(MPTTModel):
     name = models.CharField(max_length=200, unique=True, db_index=True)
     url = models.CharField(max_length=4, unique=True, null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    notes = models.CharField(max_length=50, blank=True, null=True)
+    notes = models.CharField(
+        max_length=50,
+        default='Criada',
+        blank=True,
+        null=True
+    )
     parent = TreeForeignKey(
         'self',
         on_delete=models.CASCADE,

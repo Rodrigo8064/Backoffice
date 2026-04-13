@@ -21,3 +21,18 @@ class ProductForm(forms.ModelForm):
             ),
         }
         labels = {'name': 'Nome', 'parent': 'Família'}
+
+
+class ProductUpdateForm(forms.ModelForm):
+    class Meta:
+        model = models.ProductType
+        fields = ['name', 'is_active', 'parent']
+        widgets = {
+            'parent': ParentSearchWidget(
+                attrs={
+                    'data-width': '100%',
+                    'class': 'form-control',
+                }
+            ),
+        }
+        labels = {'name': 'Nome', 'parent': 'Família', 'is_active': 'Ativo'}

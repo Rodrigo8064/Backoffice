@@ -48,7 +48,7 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
 class CategoryUpdateView(LoginRequiredMixin, UpdateView):
     model = models.Category
     template_name = 'category_update.html'
-    form_class = forms.CategoryForm
+    form_class = forms.CategoryUpdateForm
     success_url = reverse_lazy('category_list')
 
 

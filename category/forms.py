@@ -11,7 +11,7 @@ class ParentSearchWidget(s2forms.ModelSelect2Widget):
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = models.Category
-        fields = ['name', 'parent', 'url']
+        fields = ['name', 'parent', 'url', 'notes']
         widgets = {
             'parent': ParentSearchWidget(
                 attrs={
@@ -20,4 +20,30 @@ class CategoryForm(forms.ModelForm):
                 }
             ),
         }
-        labels = {'name': 'Nome', 'parent': 'Família', 'url': 'ID'}
+        labels = {
+            'name': 'Nome',
+            'parent': 'Família',
+            'url': 'ID',
+            'notes': 'status'
+        }
+
+
+class CategoryUpdateForm(forms.ModelForm):
+    class Meta:
+        model = models.Category
+        fields = ['name', 'parent', 'url', 'is_active', 'notes']
+        widgets = {
+            'parent': ParentSearchWidget(
+                attrs={
+                    'data-width': '100%',
+                    'class': 'form-control',
+                }
+            ),
+        }
+        labels = {
+            'name': 'Nome',
+            'parent': 'Família',
+            'url': 'ID',
+            'is_active': 'Ativo',
+            'notes': 'status'
+        }

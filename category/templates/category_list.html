@@ -153,8 +153,10 @@
         <thead>
             <tr>
                 <th>Nome</th>
+                <th>Nota</th>
                 <th>ID</th>
                 <th>Hierarquia completa</th>
+                <th>Status</th>
                 <th></th>
             </tr>
         </thead>
@@ -162,8 +164,16 @@
             {% for cat in categories %}
             <tr>
                 <td><span class="cell-name">{{ cat.name }}</span></td>
+                <td><span class="cell-name">{{ cat.notes }}</span></td>
                 <td><span class="cell-id">{{ cat.url }}</span></td>
                 <td><span class="cell-hierarchy">{{ cat }}</span></td>
+                <td>
+                    {% if cat.is_active %}
+                        <span class="badge-active"><i class="bi bi-circle-fill" style="font-size:7px;"></i> Ativo</span>
+                    {% else %}
+                        <span class="badge-inactive"><i class="bi bi-circle-fill" style="font-size:7px;"></i> Inativo</span>
+                    {% endif %}
+                </td>
                 <td>
                     <div class="row-actions">
                         <a href="{% url 'category_update' cat.id %}" class="btn-row edit" title="Editar">

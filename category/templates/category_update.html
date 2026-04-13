@@ -14,6 +14,46 @@
 {% endblock %}
 
 {% block extra_css %}
+<style>
+    .field-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
+    .field-label { font-size: 12.5px; font-weight: 500; color: var(--text-secondary); }
+
+    .status-toggle-wrap {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+    .status-toggle-wrap:has(#id_is_active:checked) {
+        border-color: rgba(62,207,142,0.35);
+        background: rgba(62,207,142,0.04);
+    }
+    .status-toggle-title { font-size: 13.5px; font-weight: 500; color: var(--text-primary); }
+
+    .toggle-switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+        position: absolute; inset: 0;
+        background: var(--border-active);
+        border-radius: 24px; cursor: pointer;
+        transition: background 0.2s;
+    }
+    .toggle-slider::before {
+        content: '';
+        position: absolute;
+        width: 18px; height: 18px;
+        border-radius: 50%; background: #fff;
+        top: 3px; left: 3px;
+        transition: transform 0.2s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--success); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+</style>
     {{ form.media.css }}
 {% endblock %}
 
@@ -53,10 +93,41 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="{{ form.notes.id_for_label }}" class="form-label">{{ form.notes.label }}</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                        <div class="invalid-feedback d-block">{{ form.notes.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
                     <label for="{{ form.parent.id_for_label }}" class="form-label">{{ form.parent.label }}</label>
                     {{ form.parent }}
                     {% if form.parent.errors %}
                         <div class="invalid-feedback d-block">{{ form.parent.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Status da Categoria</label>
+                    <div class="status-toggle-wrap">
+                        <div class="status-toggle-info">
+                            <div class="status-toggle-title">Categoria ativa</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input
+                                type="checkbox"
+                                name="is_active"
+                                id="id_is_active"
+                                {% if object.is_active %}checked{% endif %}
+                            >
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    {% if form.is_active.errors %}
+                        {% for error in form.is_active.errors %}
+                        <span class="field-error"><i class="bi bi-x-circle-fill"></i> {{ error }}</span>
+                        {% endfor %}
                     {% endif %}
                 </div>
 

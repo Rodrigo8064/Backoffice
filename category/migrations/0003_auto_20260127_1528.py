@@ -11,5 +11,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        UnaccentExtension() if not settings.DEBUG else migrations.RunSQL('SELECT 1'), # Isso instala a extensão no banco
+        UnaccentExtension() # Isso instala a extensão no banco
     ]
