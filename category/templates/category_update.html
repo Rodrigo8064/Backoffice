@@ -2,73 +2,77 @@
 
 {% block title %}Editar: {{ object.name }}{% endblock %}
 
-{% block styles %}
+{% block breadcrumb %}Backoffice › Categorias › Editar{% endblock %}
+{% block page_title %}Editar categoria{% endblock %}
+
+{% block nav_category %}active-purple{% endblock %}
+
+{% block topbar_actions %}
+    <a href="{% url 'category_list' %}" class="btn-topbar">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .field-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
+    .field-label { font-size: 12.5px; font-weight: 500; color: var(--text-secondary); }
+
+    .status-toggle-wrap {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+    .status-toggle-wrap:has(#id_is_active:checked) {
+        border-color: rgba(62,207,142,0.35);
+        background: rgba(62,207,142,0.04);
+    }
+    .status-toggle-title { font-size: 13.5px; font-weight: 500; color: var(--text-primary); }
+
+    .toggle-switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+        position: absolute; inset: 0;
+        background: var(--border-active);
+        border-radius: 24px; cursor: pointer;
+        transition: background 0.2s;
+    }
+    .toggle-slider::before {
+        content: '';
+        position: absolute;
+        width: 18px; height: 18px;
+        border-radius: 50%; background: #fff;
+        top: 3px; left: 3px;
+        transition: transform 0.2s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--success); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+</style>
     {{ form.media.css }}
-
-    <style>
-        /* 1. CORREÇÃO CRÍTICA DE LARGURA */
-        /* Força o Select2 a ocupar 100% do espaço disponível */
-        .select2-container {
-            width: 100% !important;
-            display: block;
-        }
-
-        /* 2. CORREÇÃO DE ALTURA E ESTILO (BOOTSTRAP 5) */
-        /* Faz a caixa parecer um input padrão do Bootstrap */
-        .select2-container--default .select2-selection--single {
-            height: 38px !important; /* Altura padrão do Bootstrap */
-            padding: 5px 0;          /* Centraliza o texto verticalmente */
-            border: 1px solid #dee2e6 !important; /* Cor da borda do Bootstrap */
-            border-radius: 0.375rem !important;
-        }
-
-        /* Ajusta a setinha para ficar centralizada */
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 36px !important;
-            right: 10px !important;
-        }
-
-        /* Ajusta o texto selecionado para não ficar cortado */
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 26px !important;
-            padding-left: 12px !important;
-            color: #212529 !important;
-        }
-
-        /* Cor da borda quando clica (Foco) */
-        .select2-container--default.select2-container--focus .select2-selection--single {
-            border-color: #86b7fe !important;
-            box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25) !important;
-        }
-
-        /* Estilo para inputs normais (Nome) */
-        #id_name, #id_nome {
-            display: block;
-            width: 100%;
-            padding: 0.375rem 0.75rem;
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #212529;
-            background-color: #fff;
-            border: 1px solid #dee2e6;
-            border-radius: 0.375rem;
-        }
-    </style>
 {% endblock %}
 
 {% block content %}
 
+<div style="max-width: 560px;">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'category_list' %}">Categorias</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Editar: {{ object.name }}</li>
+            <li class="breadcrumb-item active">Editar: {{ object.name }}</li>
         </ol>
     </nav>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
-            <h4 class="card-title mb-4">Editar Categoria</h4>
-            
+    <div class="card">
+        <div class="card-header d-flex align-items-center gap-2">
+            <i class="bi bi-pencil" style="color:var(--accent-bo)"></i>
+            Editar Categoria
+        </div>
+        <div class="card-body">
             <form method="POST">
                 {% csrf_token %}
 
@@ -79,11 +83,20 @@
                         <div class="invalid-feedback d-block">{{ form.name.errors.as_text }}</div>
                     {% endif %}
                 </div>
+
                 <div class="mb-3">
                     <label for="{{ form.url.id_for_label }}" class="form-label">{{ form.url.label }}</label>
                     {{ form.url }}
                     {% if form.url.errors %}
                         <div class="invalid-feedback d-block">{{ form.url.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.notes.id_for_label }}" class="form-label">{{ form.notes.label }}</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                        <div class="invalid-feedback d-block">{{ form.notes.errors.as_text }}</div>
                     {% endif %}
                 </div>
 
@@ -95,24 +108,50 @@
                     {% endif %}
                 </div>
 
-                <hr class="my-4">
-                
+                <div class="field-group">
+                    <label class="field-label">Status da Categoria</label>
+                    <div class="status-toggle-wrap">
+                        <div class="status-toggle-info">
+                            <div class="status-toggle-title">Categoria ativa</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input
+                                type="checkbox"
+                                name="is_active"
+                                id="id_is_active"
+                                {% if object.is_active %}checked{% endif %}
+                            >
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    {% if form.is_active.errors %}
+                        {% for error in form.is_active.errors %}
+                        <span class="field-error"><i class="bi bi-x-circle-fill"></i> {{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <hr>
+
                 <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Salvar alterações
+                        </button>
                         <a href="{% url 'category_list' %}" class="btn btn-secondary">Cancelar</a>
                     </div>
-                    
-                    <a href="{% url 'category_delete' object.pk %}" class="btn btn-outline-danger">
-                        Deletar
+                    <a href="{% url 'category_delete' object.pk %}" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash"></i> Deletar
                     </a>
                 </div>
             </form>
         </div>
     </div>
+</div>
 
+{% endblock %}
+
+{% block extra_js %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
     {{ form.media.js }}
-
 {% endblock %}

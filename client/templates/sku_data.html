@@ -1,110 +1,324 @@
 {% extends "base.html" %}
 
-{% block title %}Consulta de Navegation{% endblock %}
+{% block title %}Consulta de SKU{% endblock %}
+
+{% block breadcrumb %}Backoffice › Consulta de SKU{% endblock %}
+{% block page_title %}Consulta de SKU{% endblock %}
+
+{% block nav_classification %}active-purple{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Layout de busca */
+    .search-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 20px 24px;
+        margin-bottom: 24px;
+    }
+
+    .search-card-title {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+
+    .search-card-subtitle {
+        font-size: 12.5px;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+    }
+
+    .search-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .search-field { display: flex; flex-direction: column; gap: 5px; }
+
+    .search-field label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-secondary);
+    }
+
+    .search-input {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-primary);
+        border-radius: var(--radius);
+        font-family: var(--font-mono);
+        font-size: 13.5px;
+        padding: 8px 14px;
+        width: 260px;
+        outline: none;
+        transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .search-input:focus {
+        border-color: var(--accent-bo);
+        box-shadow: 0 0 0 3px var(--accent-bo-glow);
+    }
+    .search-input::placeholder { color: var(--text-muted); }
+
+    .btn-search {
+        display: inline-flex; align-items: center; gap: 7px;
+        background: var(--accent-bo); border: none;
+        border-radius: var(--radius); color: #fff;
+        font-family: var(--font-sans); font-size: 13.5px; font-weight: 600;
+        padding: 9px 20px; cursor: pointer;
+        transition: opacity var(--transition), box-shadow var(--transition);
+        white-space: nowrap;
+    }
+    .btn-search:hover { opacity: 0.88; box-shadow: 0 0 0 3px var(--accent-bo-glow); }
+
+    /* Results */
+    .results-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    .results-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .results-title {
+        font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin: 0;
+    }
+
+    .results-count {
+        font-size: 12px; color: var(--text-muted);
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: 20px; padding: 2px 10px;
+        font-family: var(--font-mono);
+    }
+
+    /* SKU Table */
+    .sku-table {
+        width: 100%; border-collapse: collapse;
+    }
+    .sku-table thead tr { border-bottom: 1px solid var(--border-subtle); }
+    .sku-table thead th {
+        padding: 10px 16px;
+        font-size: 11px; font-weight: 600;
+        letter-spacing: 0.8px; text-transform: uppercase;
+        color: var(--text-muted);
+        background: var(--bg-elevated);
+        white-space: nowrap; text-align: left;
+    }
+    .sku-table tbody tr {
+        border-bottom: 1px solid var(--border-subtle);
+        transition: background var(--transition);
+    }
+    .sku-table tbody tr:last-child { border-bottom: none; }
+    .sku-table tbody tr:hover { background: var(--bg-hover); }
+    .sku-table tbody td {
+        padding: 12px 16px; vertical-align: middle;
+        font-size: 13px; color: var(--text-primary);
+    }
+
+    /* Cell styles */
+    .cell-sku {
+        font-family: var(--font-mono);
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--accent-bo);
+    }
+
+    .cell-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-bottom: 2px;
+    }
+
+    .cell-value {
+        font-size: 13px;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+    }
+
+    .cell-meta {
+        font-size: 11.5px;
+        color: var(--text-muted);
+    }
+
+    .classifier-badge {
+        display: inline-block;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 11px;
+        color: var(--text-secondary);
+        margin-bottom: 4px;
+    }
+
+    .subcategory-list {
+        font-size: 12px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    .date-block { display: flex; flex-direction: column; gap: 2px; }
+    .date-row   { font-size: 11.5px; color: var(--text-muted); }
+    .date-row span { color: var(--text-secondary); font-family: var(--font-mono); }
+
+    /* Empty / warning states */
+    .empty-state {
+        text-align: center;
+        padding: 56px 24px;
+        color: var(--text-muted);
+    }
+    .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.4; }
+    .empty-title { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+    .empty-sub   { font-size: 13px; }
+
+    .warn-block {
+        background: rgba(240,180,41,0.08);
+        border: 1px solid rgba(240,180,41,0.2);
+        border-radius: var(--radius);
+        padding: 14px 18px;
+        font-size: 13px;
+        color: var(--warning);
+        display: flex; align-items: flex-start; gap: 10px;
+        margin-top: 16px;
+    }
+    .warn-block i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+</style>
+{% endblock %}
 
 {% block content %}
 
-    <ul class="nav nav-tabs mb-3">
-        <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Consulta de SKU</a>
-        </li>
-    </ul>
+<!-- Search card -->
+<div class="search-card">
+    <p class="search-card-title">Buscar por Navigation ID</p>
+    <p class="search-card-subtitle">Insira um navigation ID para ver as informações referentes à sua categorização</p>
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Buscar</h5>
-            <h6 class="card-subtitle">Insira um navigation ID para ver as informações referentes a sua categorização</h6>
-            <form method="GET" class="row g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="navigation_input" class="col-form-label">Navigation_id:</label>
-                </div>
-                <div class="col-auto">
-                    <input type="text" id="navigation_input" name="navigation" class="form-control" value="{{ request.GET.navigation }}">
-                </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">Buscar</button>
-                </div>
-            </form>
+    <form method="GET" class="search-row">
+        <div class="search-field">
+            <label for="navigation_input">Navigation ID</label>
+            <input
+                type="text"
+                id="navigation_input"
+                name="navigation"
+                class="search-input"
+                placeholder="Ex: 123456"
+                value="{{ request.GET.navigation }}"
+                autocomplete="off"
+            >
         </div>
+        <button type="submit" class="btn-search">
+            <i class="bi bi-search"></i> Buscar
+        </button>
+    </form>
+</div>
+
+<!-- Results -->
+{% if api_result %}
+<div class="results-card">
+    <div class="results-header">
+        <span class="results-title">Resultados</span>
+        <span class="results-count">{{ api_result|length }} item{{ api_result|length|pluralize:",ns" }}</span>
     </div>
 
-    {% if api_result %}
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0">Resultados Encontrados: {{ api_result|length }}</h5>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle mb-0 text-nowrap">
-                    <thead class="table-light">
-                        <tr>
-                            <th>SKU</th>
-                            <th>Tipo de Produto</th>
-                            <th>Status</th>
-                            <th>(Nav / Category)</th>
-                            <th>Canal / Seller</th>
-                            <th>Classificação</th>
-                            <th>Subcategorias</th>
-                            <th>Datas</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in api_result %}
-                        <tr>
-                            <td class="fw-bold">{{ item.sku }}</td>
-                            
-                            <td>{{ item.product_type }}</td>
-                            
-                            <td>
-                                {% if item.active %}
-                                    <span class="badge bg-success">Ativo</span>
-                                {% else %}
-                                    <span class="badge bg-danger">Inativo</span>
-                                {% endif %}
-                            </td>
+    <div style="overflow-x: auto;">
+        <table class="sku-table">
+            <thead>
+                <tr>
+                    <th>SKU</th>
+                    <th>Tipo de Produto</th>
+                    <th>Status</th>
+                    <th>Nav / Category</th>
+                    <th>Canal / Seller</th>
+                    <th>Classificação</th>
+                    <th>Subcategorias</th>
+                    <th>Datas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in api_result %}
+                <tr>
+                    <td><span class="cell-sku">{{ item.sku }}</span></td>
 
-                            <td>
-                                <small class="d-block text-muted">Nav: <span class="text-dark">{{ item.navigation_id }}</span></small>
-                                <small class="d-block text-muted">Cat: <span class="text-dark">{{ item.category_id }}</span></small>
-                            </td>
+                    <td>{{ item.product_type }}</td>
 
-                            <td>
-                                <div class="d-flex flex-column">
-                                    <span>{{ item.channel }}</span>
-                                    <small class="text-muted">Seller: {{ item.seller_id }}</small>
-                                </div>
-                            </td>
+                    <td>
+                        {% if item.active %}
+                            <span class="badge-active"><i class="bi bi-circle-fill" style="font-size:6px;"></i> Ativo</span>
+                        {% else %}
+                            <span class="badge-inactive"><i class="bi bi-circle-fill" style="font-size:6px;"></i> Inativo</span>
+                        {% endif %}
+                    </td>
 
-                            <td>
-                                <span class="badge bg-light text-dark border">{{ item.type }}</span>
-                                <br>
-                                <small class="text-muted">{{ item.classifier }}</small>
-                            </td>
+                    <td>
+                        <div class="cell-label">Nav</div>
+                        <div class="cell-value">{{ item.navigation_id }}</div>
+                        <div class="cell-label" style="margin-top:4px;">Cat</div>
+                        <div class="cell-value">{{ item.category_id }}</div>
+                    </td>
 
-                            <td>
-                                {{ item.subcategories|join:", " }}
-                            </td>
+                    <td>
+                        <div class="cell-value">{{ item.channel }}</div>
+                        <div class="cell-meta">Seller: {{ item.seller_id }}</div>
+                    </td>
 
-                            <td>
-                                <small class="d-block">C: {{ item.created_at }}</small>
-                                <small class="d-block text-muted">A: {{ item.updated_at }}</small>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="text-center py-4">Nenhum dado encontrado.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                    <td>
+                        <div class="classifier-badge">{{ item.type }}</div>
+                        <div class="cell-meta">{{ item.classifier }}</div>
+                    </td>
+
+                    <td>
+                        <div class="subcategory-list">
+                            {{ item.subcategories|join:", " }}
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="date-block">
+                            <div class="date-row">C: <span>{{ item.created_at }}</span></div>
+                            <div class="date-row">A: <span>{{ item.updated_at }}</span></div>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">
+                        <div class="empty-state">
+                            <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+                            <p class="empty-title">Nenhum dado encontrado</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    {% elif request.GET.navigation %}
-        <div class="alert alert-warning mt-3">
-            Nenhum resultado retornado pela API.
-            {% if error %}<br>Erro técnico: {{ error }}{% endif %}
-        </div>
-    {% endif %}
+</div>
+
+{% elif request.GET.navigation %}
+<div class="warn-block">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <div>
+        Nenhum resultado retornado pela API para o navigation ID <strong style="font-family:var(--font-mono)">{{ request.GET.navigation }}</strong>.
+        {% if error %}<br><span style="font-size:12px;opacity:0.8;">Erro técnico: {{ error }}</span>{% endif %}
+    </div>
+</div>
+
+{% else %}
+<!-- Estado inicial — sem busca -->
+<div style="text-align:center; padding: 64px 24px; color: var(--text-muted);">
+    <div style="font-size:40px; margin-bottom:14px; opacity:0.3;"><i class="bi bi-search"></i></div>
+    <p style="font-size:14px; color:var(--text-secondary); font-weight:600; margin-bottom:4px;">Nenhuma busca realizada</p>
+    <p style="font-size:13px;">Digite um navigation ID acima para ver os resultados.</p>
+</div>
+{% endif %}
 
 {% endblock %}

@@ -1,17 +1,19 @@
 import csv
+import typing
+
 from django.core.management.base import BaseCommand
+
 from history.models import History
 
 
 class Command(BaseCommand):
-
+    @typing.override
     def add_arguments(self, parser):
         parser.add_argument(
             'file_name',
             type=str,
             help='Nome do arquivo CSV com o historico',
         )
-
 
     def handle(self, *args, **options):
         file_name = options['file_name']
@@ -31,4 +33,6 @@ class Command(BaseCommand):
                     new_tax=new_tax,
                 )
 
-        self.stdout.write(self.style.SUCCESS('HISTORICOS IMPORTADOS COM SUCESSO!'))
+        self.stdout.write(
+            self.style.SUCCESS('HISTORICOS IMPORTADOS COM SUCESSO!')
+        )

@@ -2,6 +2,7 @@
 
 from django.db import migrations
 from django.contrib.postgres.operations import UnaccentExtension
+from django.conf import settings
 
 class Migration(migrations.Migration):
 
@@ -10,5 +11,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        UnaccentExtension(), # Isso instala a extensão no banco
+        UnaccentExtension() # Isso instala a extensão no banco
     ]

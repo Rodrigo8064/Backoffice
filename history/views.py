@@ -1,9 +1,9 @@
-from django.views.generic import ListView, UpdateView, DeleteView, CreateView
-from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from .models import History
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+
 from .forms import HistoryForm
+from .models import History
 
 
 class HistoryListView(LoginRequiredMixin, ListView):
@@ -20,11 +20,11 @@ class HistoryListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(entity__icontains=entity)
         return queryset
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['entity'] = self.request.GET.get('entity', '')
         return context
+
 
 class HistoryCreateView(LoginRequiredMixin, CreateView):
     model = History

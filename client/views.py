@@ -1,15 +1,13 @@
-from django.views.generic import ListView
-from django.shortcuts import render
-from .agent import IAgent
-from . import models, clients
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
+
+from . import clients, models
 
 
 class SkuListView(LoginRequiredMixin, ListView):
     model = models.DataClient
     template_name = 'sku_data.html'
     context_object_name = 'data_type'
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -20,17 +18,6 @@ class SkuListView(LoginRequiredMixin, ListView):
                 client = clients.DataService()
                 context['api_result'] = client.get_sku_data(navigation)
             except Exception as e:
-                context['error'] = f"Erro ao buscar dados: {e}"
+                context['error'] = f'Erro ao buscar dados: {e}'
 
         return context
-
-
-def ia_agent(request):
-    descricao = request.GET.get('descricao')
-    sugestao = None
-
-    if descricao:
-        agent = IAgent()
-        sugestao = agent.invoke(descricao)
-
-    return render(request, 'IAgent.html', {'sugestao': sugestao})

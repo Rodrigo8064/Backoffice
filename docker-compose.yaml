@@ -1,28 +1,23 @@
 services:
+  # ── Banco de dados ──────────────────────────────────────────────────────
   backoffice_db:
     image: postgres:17
     environment:
-      POSTGRES_DB: backoffice
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    expose:
+      - "5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d backoffice"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
       timeout: 5s
       retries: 5
 
-  redis_cache:
-    image: redis:alpine
-    restart: always
-    expose:
-      - "6379"
-    volumes:
-      - redis_data:/data
-
+  # ── Aplicação ───────────────────────────────────────────────────────────
   backoffice:
     build: .
     image: backoffice_image
@@ -31,14 +26,9 @@ services:
     depends_on:
       backoffice_db:
         condition: service_healthy
-      redis_cache:
-        condition: service_started
-    volumes:
-      - .:/backoffice
     restart: always
     env_file:
       - .env
 
 volumes:
   postgres_data:
-  redis_data:

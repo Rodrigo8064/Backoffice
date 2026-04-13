@@ -1,0 +1,788 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Atributo — AtributoHub{% endblock %}
+
+{% block breadcrumb %}Atributos › Editar{% endblock %}
+{% block page_title %}Editar atributo{% endblock %}
+
+{% block nav_attr_list %}active-blue{% endblock %}
+
+{% block topbar_actions %}
+    <a href="{% url 'attribute_detail' object.pk %}" class="btn-back">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .btn-back {
+        height: 36px;
+        padding: 0 16px;
+        font-size: 13px;
+        font-weight: 500;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        border-radius: var(--radius);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background var(--transition), color var(--transition);
+        text-decoration: none;
+    }
+    .btn-back:hover {
+        background: var(--bg-hover);
+        color: var(--text-primary);
+    }
+
+    /* ── Layout ── */
+    .update-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 20px;
+        align-items: start;
+    }
+
+    @media (max-width: 900px) {
+        .update-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── Form card ── */
+    .form-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border-subtle);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .form-card-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-card-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 7px;
+        background: var(--accent-glow);
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .form-card-title {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .form-card-meta {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        font-family: var(--font-mono);
+    }
+
+    .form-card-body {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* ── Fields ── */
+    .field-group { display: flex; flex-direction: column; gap: 5px; }
+
+    .field-label {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .field-label .required { color: var(--accent); font-size: 14px; line-height: 1; }
+
+    .field-hint { font-size: 11.5px; color: var(--text-muted); margin-top: 4px; }
+
+    .form-control {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-primary);
+        border-radius: var(--radius);
+        font-family: var(--font-sans);
+        font-size: 13.5px;
+        padding: 9px 12px;
+        width: 100%;
+        outline: none;
+        transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .form-control:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .form-control::placeholder { color: var(--text-muted); }
+    .form-control.has-error {
+        border-color: var(--danger);
+        box-shadow: 0 0 0 3px rgba(247,111,111,0.12);
+    }
+
+    .field-error {
+        font-size: 12px;
+        color: var(--danger);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 3px;
+    }
+
+    /* ── Checkbox group ── */
+    .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        max-height: 200px;
+        overflow-y: auto;
+        transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .checkbox-group:focus-within {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .checkbox-group.has-error { border-color: var(--danger); }
+    .checkbox-group.empty-options {
+        color: var(--text-muted);
+        font-size: 13px;
+        font-style: italic;
+        padding: 14px;
+        text-align: center;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 4px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background var(--transition);
+    }
+    .checkbox-item:hover { background: var(--bg-hover); }
+    .checkbox-item input[type="checkbox"] {
+        width: 15px;
+        height: 15px;
+        accent-color: var(--accent);
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    .checkbox-item label {
+        font-size: 13.5px;
+        color: var(--text-primary);
+        cursor: pointer;
+        flex: 1;
+        margin: 0;
+    }
+
+    .source-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .source-dot.shopify { background: var(--accent); }
+    .source-dot.magalu  { background: #a78bfa; }
+    .source-dot.default { background: var(--text-muted); }
+
+    /* ── Status toggle ── */
+    .status-toggle-wrap {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        transition: border-color var(--transition);
+    }
+
+    .status-toggle-wrap:has(#id_is_active:checked) {
+        border-color: rgba(62, 207, 142, 0.35);
+        background: rgba(62, 207, 142, 0.04);
+    }
+
+    .status-toggle-info { flex: 1; }
+
+    .status-toggle-title {
+        font-size: 13.5px;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 2px;
+    }
+
+    .status-toggle-desc {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    /* Toggle switch */
+    .toggle-switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+        position: absolute;
+        inset: 0;
+        background: var(--border-active);
+        border-radius: 24px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .toggle-slider::before {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.2s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--success); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    /* ── Divider ── */
+    .form-section-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .form-section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border-subtle);
+    }
+
+    /* ── Footer ── */
+    .form-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 24px;
+        border-top: 1px solid var(--border-subtle);
+        background: var(--bg-elevated);
+    }
+
+    .form-footer-right { display: flex; gap: 10px; }
+
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--accent);
+        border: none;
+        border-radius: var(--radius);
+        color: #fff;
+        font-family: var(--font-sans);
+        font-size: 13.5px;
+        font-weight: 600;
+        padding: 9px 20px;
+        cursor: pointer;
+        transition: opacity var(--transition), box-shadow var(--transition);
+    }
+    .btn-primary:hover {
+        opacity: 0.88;
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: transparent;
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius);
+        color: var(--text-secondary);
+        font-family: var(--font-sans);
+        font-size: 13.5px;
+        font-weight: 500;
+        padding: 9px 18px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background var(--transition), color var(--transition);
+    }
+    .btn-cancel:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+    /* ── Side panel ── */
+    .side-panel { display: flex; flex-direction: column; gap: 16px; }
+
+    .info-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    .info-card-header {
+        padding: 13px 18px;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    /* ── Audit card ── */
+    .audit-list {
+        padding: 14px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .audit-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .audit-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        background: var(--bg-elevated);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        color: var(--text-muted);
+        flex-shrink: 0;
+    }
+
+    .audit-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-bottom: 1px;
+    }
+
+    .audit-value {
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+    }
+
+    /* ── Preview ── */
+    .preview-inner { padding: 16px 18px; }
+    .preview-name {
+        font-family: var(--font-mono);
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 6px;
+        min-height: 24px;
+        word-break: break-word;
+    }
+    .preview-value {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+        min-height: 18px;
+    }
+    .preview-chips { display: flex; flex-wrap: wrap; gap: 5px; min-height: 24px; }
+    .preview-placeholder { color: var(--text-muted); font-size: 12px; font-style: italic; }
+
+    .preview-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11.5px;
+        margin-top: 10px;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+    .preview-status.active   { background: rgba(62,207,142,0.12); color: var(--success); }
+    .preview-status.inactive { background: rgba(247,111,111,0.10); color: var(--danger); }
+
+    /* ── Changed indicator ── */
+    .unsaved-badge {
+        display: none;
+        font-size: 11px;
+        background: rgba(240,180,41,0.15);
+        color: var(--warning);
+        border-radius: 20px;
+        padding: 2px 10px;
+        align-items: center;
+        gap: 5px;
+    }
+    .unsaved-badge.visible { display: inline-flex; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<form method="post" id="updateForm">
+    {% csrf_token %}
+
+    <div class="update-layout">
+
+        <!-- ── Main form card ── -->
+        <div class="form-card">
+            <div class="form-card-header">
+                <div class="form-card-header-left">
+                    <div class="form-card-icon"><i class="bi bi-pencil"></i></div>
+                    <span class="form-card-title">{{ object.name }}</span>
+                </div>
+                <span class="unsaved-badge" id="unsavedBadge">
+                    <i class="bi bi-circle-fill" style="font-size:6px;"></i> Alterações não salvas
+                </span>
+            </div>
+
+            <div class="form-card-body">
+
+                <!-- Dados básicos -->
+                <p class="form-section-label">Dados básicos</p>
+
+                <!-- Nome -->
+                <div class="field-group">
+                    <label class="field-label" for="id_name">
+                        Nome do atributo <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="name"
+                        id="id_name"
+                        class="form-control {% if form.name.errors %}has-error{% endif %}"
+                        placeholder="Ex: cor, tamanho, material..."
+                        value="{{ form.name.value|default:object.name }}"
+                        autocomplete="off"
+                    >
+                    {% if form.name.errors %}
+                        {% for error in form.name.errors %}
+                        <span class="field-error"><i class="bi bi-x-circle-fill"></i> {{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Valor esperado -->
+                <div class="field-group">
+                    <label class="field-label" for="id_expected_value">Valor esperado</label>
+                    <input
+                        type="text"
+                        name="expected_value"
+                        id="id_expected_value"
+                        class="form-control {% if form.expected_value.errors %}has-error{% endif %}"
+                        placeholder="Ex: Azul, G, Algodão..."
+                        value="{{ form.expected_value.value|default:'' }}"
+                        autocomplete="off"
+                    >
+                    {% if form.expected_value.errors %}
+                        {% for error in form.expected_value.errors %}
+                        <span class="field-error"><i class="bi bi-x-circle-fill"></i> {{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Fontes e famílias -->
+                <p class="form-section-label">Categorização</p>
+
+                <!-- Fontes -->
+                <div class="field-group">
+                    <label class="field-label">Fonte(s) <span class="required">*</span></label>
+
+                    {% if form.sources.field.queryset.exists %}
+                    <div class="checkbox-group {% if form.sources.errors %}has-error{% endif %}">
+                        {% for source in form.sources.field.queryset %}
+                        <div class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                name="sources"
+                                id="source_{{ source.pk }}"
+                                value="{{ source.pk }}"
+                                {% if source in object.sources.all %}checked{% endif %}
+                            >
+                            <span class="source-dot
+                                {% if 'shopify' in source.name|lower %}shopify
+                                {% elif 'magalu' in source.name|lower %}magalu
+                                {% else %}default{% endif %}">
+                            </span>
+                            <label for="source_{{ source.pk }}">{{ source.name }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="checkbox-group empty-options">
+                        <i class="bi bi-exclamation-circle"></i> Nenhuma fonte ativa cadastrada.
+                    </div>
+                    {% endif %}
+
+                    {% if form.sources.errors %}
+                        {% for error in form.sources.errors %}
+                        <span class="field-error"><i class="bi bi-x-circle-fill"></i> {{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Famílias -->
+                <div class="field-group">
+                    <label class="field-label">Família(s) <span class="required">*</span></label>
+
+                    {% if form.families.field.queryset.exists %}
+                    <div class="checkbox-group {% if form.families.errors %}has-error{% endif %}">
+                        {% for family in form.families.field.queryset %}
+                        <div class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                name="families"
+                                id="family_{{ family.pk }}"
+                                value="{{ family.pk }}"
+                                {% if family in object.families.all %}checked{% endif %}
+                            >
+                            <label for="family_{{ family.pk }}">{{ family.name }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="checkbox-group empty-options">
+                        <i class="bi bi-exclamation-circle"></i> Nenhuma família ativa cadastrada.
+                    </div>
+                    {% endif %}
+
+                    {% if form.families.errors %}
+                        {% for error in form.families.errors %}
+                        <span class="field-error"><i class="bi bi-x-circle-fill"></i> {{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Status -->
+                <p class="form-section-label">Configuração</p>
+
+                <div class="field-group">
+                    <label class="field-label">Status do atributo</label>
+                    <div class="status-toggle-wrap">
+                        <div class="status-toggle-info">
+                            <div class="status-toggle-title">Atributo ativo</div>
+                            <div class="status-toggle-desc">Atributos inativos não aparecem nas listagens do time.</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input
+                                type="checkbox"
+                                name="is_active"
+                                id="id_is_active"
+                                {% if object.is_active %}checked{% endif %}
+                            >
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    {% if form.is_active.errors %}
+                        {% for error in form.is_active.errors %}
+                        <span class="field-error"><i class="bi bi-x-circle-fill"></i> {{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="form-footer">
+                <a href="{% url 'attribute_detail' object.pk %}" class="btn-cancel">
+                    Cancelar
+                </a>
+                <div class="form-footer-right">
+                    <button type="submit" class="btn-primary">
+                        <i class="bi bi-check-lg"></i> Salvar alterações
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Side panel ── -->
+        <div class="side-panel">
+
+            <!-- Preview -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="bi bi-eye" style="color:var(--accent)"></i> Pré-visualização
+                </div>
+                <div class="preview-inner">
+                    <div class="preview-name" id="previewName">{{ object.name }}</div>
+                    <div class="preview-value" id="previewValue">
+                        {{ object.expected_value|default:"— valor esperado" }}
+                    </div>
+                    <div class="preview-chips" id="previewChips">
+                        {% for source in object.sources.all %}
+                            <span class="tag-chip {% if 'shopify' in source.name|lower %}shopify{% elif 'magalu' in source.name|lower %}magalu{% endif %}">
+                                {{ source.name }}
+                            </span>
+                        {% endfor %}
+                        {% for family in object.families.all %}
+                            <span class="tag-chip">{{ family.name }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="preview-status {% if object.is_active %}active{% else %}inactive{% endif %}" id="previewStatus">
+                        <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                        <span id="previewStatusText">{% if object.is_active %}Ativo{% else %}Inativo{% endif %}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auditoria -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="bi bi-clock-history" style="color:var(--accent)"></i> Auditoria
+                </div>
+                <div class="audit-list">
+                    <div class="audit-item">
+                        <div class="audit-icon"><i class="bi bi-calendar-plus"></i></div>
+                        <div>
+                            <div class="audit-label">Criado em</div>
+                            <div class="audit-value">{{ object.created_at|date:"d/m/Y H:i" }}</div>
+                        </div>
+                    </div>
+                    <div class="audit-item">
+                        <div class="audit-icon"><i class="bi bi-calendar-check"></i></div>
+                        <div>
+                            <div class="audit-label">Última atualização</div>
+                            <div class="audit-value">{{ object.updated_at|date:"d/m/Y H:i" }}</div>
+                        </div>
+                    </div>
+                    <div class="audit-item">
+                        <div class="audit-icon"><i class="bi bi-person"></i></div>
+                        <div>
+                            <div class="audit-label">Criado por</div>
+                            <div class="audit-value">{{ object.user.get_short_name|default:object.user.username }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const nameInput    = document.getElementById('id_name');
+    const valueInput   = document.getElementById('id_expected_value');
+    const activeToggle = document.getElementById('id_is_active');
+    const prevName     = document.getElementById('previewName');
+    const prevValue    = document.getElementById('previewValue');
+    const prevChips    = document.getElementById('previewChips');
+    const prevStatus   = document.getElementById('previewStatus');
+    const prevStatusTx = document.getElementById('previewStatusText');
+    const unsavedBadge = document.getElementById('unsavedBadge');
+
+    // Track original values to detect changes
+    const original = {
+        name:     nameInput.value,
+        value:    valueInput.value,
+        active:   activeToggle.checked,
+        sources:  [...document.querySelectorAll('input[name="sources"]:checked')].map(c => c.value),
+        families: [...document.querySelectorAll('input[name="families"]:checked')].map(c => c.value),
+    };
+
+    function sourceClass(name) {
+        const n = name.toLowerCase();
+        if (n.includes('shopify')) return 'shopify';
+        if (n.includes('magalu'))  return 'magalu';
+        return '';
+    }
+
+    function isDirty() {
+        const curSources  = [...document.querySelectorAll('input[name="sources"]:checked')].map(c => c.value).sort();
+        const curFamilies = [...document.querySelectorAll('input[name="families"]:checked')].map(c => c.value).sort();
+        return (
+            nameInput.value   !== original.name   ||
+            valueInput.value  !== original.value  ||
+            activeToggle.checked !== original.active ||
+            JSON.stringify(curSources)  !== JSON.stringify([...original.sources].sort())  ||
+            JSON.stringify(curFamilies) !== JSON.stringify([...original.families].sort())
+        );
+    }
+
+    function updatePreview() {
+        // Name
+        const name = nameInput.value.trim();
+        prevName.textContent = name || '—';
+
+        // Value
+        const val = valueInput.value.trim();
+        prevValue.textContent = val || '— valor esperado';
+        prevValue.style.color = val ? 'var(--text-secondary)' : 'var(--text-muted)';
+
+        // Chips
+        const checkedSources  = [...document.querySelectorAll('input[name="sources"]:checked')];
+        const checkedFamilies = [...document.querySelectorAll('input[name="families"]:checked')];
+
+        let html = '';
+        checkedSources.forEach(cb => {
+            const label = document.querySelector(`label[for="${cb.id}"]`).textContent.trim();
+            html += `<span class="tag-chip ${sourceClass(label)}">${label}</span>`;
+        });
+        checkedFamilies.forEach(cb => {
+            const label = document.querySelector(`label[for="${cb.id}"]`).textContent.trim();
+            html += `<span class="tag-chip">${label}</span>`;
+        });
+
+        prevChips.innerHTML = html || `<span class="preview-placeholder">nenhuma fonte ou família selecionada</span>`;
+
+        // Status
+        const active = activeToggle.checked;
+        prevStatus.className  = `preview-status ${active ? 'active' : 'inactive'}`;
+        prevStatusTx.textContent = active ? 'Ativo' : 'Inativo';
+
+        // Unsaved badge
+        unsavedBadge.classList.toggle('visible', isDirty());
+    }
+
+    // Warn before leaving with unsaved changes
+    window.addEventListener('beforeunload', (e) => {
+        if (isDirty()) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
+    // Don't warn when actually submitting
+    document.getElementById('updateForm').addEventListener('submit', () => {
+        window.onbeforeunload = null;
+    });
+
+    nameInput.addEventListener('input', updatePreview);
+    valueInput.addEventListener('input', updatePreview);
+    activeToggle.addEventListener('change', updatePreview);
+    document.querySelectorAll('input[name="sources"], input[name="families"]')
+        .forEach(cb => cb.addEventListener('change', updatePreview));
+
+    updatePreview();
+})();
+</script>
+{% endblock %}

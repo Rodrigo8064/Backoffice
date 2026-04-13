@@ -1,7 +1,8 @@
-from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from . import models, forms
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+
+from . import forms, models
 
 
 class ProductListView(LoginRequiredMixin, ListView):
@@ -18,17 +19,18 @@ class ProductListView(LoginRequiredMixin, ListView):
             try:
                 parent_object = models.ProductType.objects.get(pk=parent)
                 queryset = parent_object.get_descendants(include_self=True)
-                
             except models.ProductType.DoesNotExist:
                 queryset = queryset.none()
         if name:
             queryset = queryset.filter(name__unaccent__icontains=name)
 
-        return queryset
+        return queryset.order_by('name')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['parent_options'] = models.ProductType.objects.filter(parent__isnull=True)
+        context['parent_options'] = models.ProductType.objects.filter(
+            parent__isnull=True
+        )
         context['total_count'] = models.ProductType.objects.count()
         context['name'] = self.request.GET.get('name', '')
         context['parent_filter'] = self.request.GET.get('parent', '')
@@ -45,7 +47,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = models.ProductType
     template_name = 'product_update.html'
-    form_class = forms.ProductForm
+    form_class = forms.ProductUpdateForm
     success_url = reverse_lazy('product_list')
 
 

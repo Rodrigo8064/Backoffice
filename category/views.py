@@ -1,7 +1,8 @@
-from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from . import models, forms
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+
+from . import forms, models
 
 
 class CategoryListView(LoginRequiredMixin, ListView):
@@ -24,11 +25,13 @@ class CategoryListView(LoginRequiredMixin, ListView):
         if name:
             queryset = queryset.filter(name__unaccent__icontains=name)
 
-        return queryset
+        return queryset.order_by('name')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['parent_options'] = models.Category.objects.filter(parent__isnull=True)
+        context['parent_options'] = models.Category.objects.filter(
+            parent__isnull=True
+        )
         context['total_count'] = models.Category.objects.count()
         context['name'] = self.request.GET.get('name', '')
         context['parent_filter'] = self.request.GET.get('parent', '')
@@ -45,7 +48,7 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
 class CategoryUpdateView(LoginRequiredMixin, UpdateView):
     model = models.Category
     template_name = 'category_update.html'
-    form_class = forms.CategoryForm
+    form_class = forms.CategoryUpdateForm
     success_url = reverse_lazy('category_list')
 
 
