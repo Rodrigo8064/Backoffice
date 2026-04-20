@@ -28,6 +28,14 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [h.strip() for h in os.getenv('ALLOWED_HOSTS', '*').split(',')]
 
+CSRF_TRUSTED_ORIGINS = [
+    url.strip() for url in os.getenv(
+        'CSRF_TRUSTED_ORIGINS',
+        'backoffice-production-3bc9.up.railway.app'
+    ).split(',')
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
