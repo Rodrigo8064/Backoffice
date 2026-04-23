@@ -6,7 +6,7 @@ from category.models import Family, Source
 
 class Attribute(models.Model):
     name = models.CharField(max_length=150)
-    expected_value = models.CharField(max_length=50, null=True, blank=True)
+    expected_value = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name='Criado em'

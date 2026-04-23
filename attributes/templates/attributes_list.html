@@ -286,13 +286,8 @@
 
     /* ── Pagination ── */
     .pagination-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
         padding: 12px 20px;
         border-top: 1px solid var(--border-subtle);
-        font-size: 12.5px;
-        color: var(--text-muted);
     }
 
     .page-info { font-family: var(--font-mono); }
@@ -351,6 +346,10 @@
 
     <select name="source" class="form-select" onchange="this.form.submit()">
         <option value="">Todas as fontes</option>
+        <option value="all"
+            {% if request.GET.source == 'all' %}selected{% endif %}>
+            Todas as fontes (simultâneo)
+        </option>
         {% for source in sources %}
         <option value="{{ source.id }}"
             {% if request.GET.source == source.id|stringformat:"s" %}selected{% endif %}>
@@ -441,7 +440,7 @@
     </table>
 
     <div class="pagination-bar">
-        <span class="page-info">{{ attributes|length }} atributo{{ attributes|length|pluralize:",s" }} encontrado{{ attributes|length|pluralize:",s" }}</span>
+        {% include 'pagination_attr.html' %}
     </div>
 
     {% else %}

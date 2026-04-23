@@ -1,0 +1,49 @@
+{% if page_obj.has_other_pages %}
+<nav>
+    <ul class="pagination justify-content-center mb-0">
+
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1{% if search %}&search={{ search|urlencode }}{% endif %}{% if family %}&family={{ family }}{% endif %}{% if source %}&source={{ source }}{% endif %}">
+                <i class="bi bi-chevron-double-left"></i>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if family %}&family={{ family }}{% endif %}{% if source %}&source={{ source }}{% endif %}">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-double-left"></i></span></li>
+        <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-left"></i></span></li>
+        {% endif %}
+
+        {% for page_number in page_obj.paginator.page_range %}
+            {% if page_number <= page_obj.number|add:3 and page_number >= page_obj.number|add:-3 %}
+            <li class="page-item {% if page_obj.number == page_number %}active{% endif %}">
+                <a class="page-link" href="?page={{ page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if family %}&family={{ family }}{% endif %}{% if source %}&source={{ source }}{% endif %}">
+                    {{ page_number }}
+                </a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if family %}&family={{ family }}{% endif %}{% if source %}&source={{ source }}{% endif %}">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if family %}&family={{ family }}{% endif %}{% if source %}&source={{ source }}{% endif %}">
+                <i class="bi bi-chevron-double-right"></i>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-right"></i></span></li>
+        <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-double-right"></i></span></li>
+        {% endif %}
+
+    </ul>
+</nav>
+{% endif %}
