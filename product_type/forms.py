@@ -7,6 +7,8 @@ from . import models
 class ParentSearchWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__unaccent__icontains']
 
+    def get_queryset(self):
+        return models.ProductType.objects.all().order_by('name')
 
 class ProductForm(forms.ModelForm):
     class Meta:

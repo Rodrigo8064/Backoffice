@@ -123,17 +123,32 @@
             {% for option in parent_options %}
                 <option value="{{ option.pk }}"
                     {% if parent_filter == option.pk|stringformat:"s" %}selected{% endif %}>
-                    {{ option }}
+                    {{ option.name }}
                 </option>
             {% endfor %}
         </select>
     </div>
 
+    {% if subparent_options %}
+    <div class="filter-field">
+        <label for="search-subparent">Filtrar por Subcategoria</label>
+        <select id="search-subparent" class="form-select" name="subparent">
+            <option value="">— Todos —</option>
+            {% for option in subparent_options %}
+                <option value="{{ option.pk }}"
+                    {% if subparent_filter == option.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ option.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    {% endif %}
+
     <div class="filter-actions">
         <button type="submit" class="btn-filter">
             <i class="bi bi-funnel"></i> Filtrar
         </button>
-        {% if name or parent_filter %}
+        {% if name or parent_filter or subparent_filter %}
         <a href="{% url 'category_list' %}" class="btn-clear">
             <i class="bi bi-x-lg"></i> Limpar
         </a>

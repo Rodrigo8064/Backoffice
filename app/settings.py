@@ -159,11 +159,20 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# CACHES = {
+#     "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
+#     "select2": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
+# }
 CACHES = {
-    "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
-    "select2": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "/tmp/django_cache",
+    },
+    "select2": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "/tmp/django_select2_cache",
+    },
 }
-
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
