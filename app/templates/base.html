@@ -82,6 +82,51 @@
             overflow-y: auto;
             overflow-x: hidden;
             z-index: 100;
+            transition: width 0.22s ease, min-width 0.22s ease;
+            position: relative;
+        }
+
+        .sidebar.collapsed {
+            width: 0;
+            min-width: 0;
+            border-right: none;
+            overflow: hidden;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-active);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            z-index: 101;
+            transition: left 0.22s ease, background var(--transition), color var(--transition), box-shadow var(--transition);
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .sidebar-toggle svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            transition: transform 0.22s ease;
+        }
+
+        .sidebar.collapsed .sidebar-toggle svg {
+            transform: rotate(180deg);
         }
 
         .sidebar-brand {
@@ -478,8 +523,13 @@
                 </form>
             </div>
         </div>
-
     </aside>
+    <button class="sidebar-toggle" id="sidebarToggle" title="Recolher menu" aria-label="Recolher menu">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 3L5 8l5 5"/>
+        </svg>
+    </button>
     {% endif %}
     <!-- ══ MAIN ══ -->
     <div class="main-area">
@@ -516,6 +566,36 @@
 {% endblock %}
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-{% block extra_js %}{% endblock %}
+{% block extra_js %}
+<script>
+const sidebar = document.querySelector('.sidebar');
+const btn = document.getElementById('sidebarToggle');
+const SIDEBAR_W = 248; // mesmo valor do --sidebar-w
+
+function updateTogglePosition(animate) {
+    const collapsed = sidebar.classList.contains('collapsed');
+    btn.style.left = collapsed ? '0px' : SIDEBAR_W + 'px';
+    btn.style.marginLeft = collapsed ? '8px' : '-14px';
+}
+
+// Posição inicial (sem animação)
+updateTogglePosition();
+
+btn.addEventListener('click', () => {
+    const collapsed = sidebar.classList.contains('collapsed');
+    sidebar.classList.toggle('collapsed', !collapsed);
+    updateTogglePosition();
+    btn.title = !collapsed ? 'Expandir menu' : 'Recolher menu';
+    btn.setAttribute('aria-label', !collapsed ? 'Expandir menu' : 'Recolher menu');
+    localStorage.setItem('sidebarCollapsed', !collapsed);
+});
+
+// Restaura estado salvo
+if (localStorage.getItem('sidebarCollapsed') === 'true') {
+    sidebar.classList.add('collapsed');
+    updateTogglePosition();
+}
+</script>
+{% endblock %}
 </body>
 </html>
